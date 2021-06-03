@@ -317,24 +317,22 @@ Thread thread;
 
 int consta = 1;
 int value = 0;
-int tima;
-
+int tima = 0;
+bool check_time_val = false;
 
 void show_time()
 {
-    tima = 0;
-    while (1) {
-    printf("%i ", tima);
-    if (consta)
-    {
-        wait_us(1000000);
-        tima++;
+   while (1) { 
+        if (check_time_val)
+        {
+            wait_us(125000);
+            tima++;
+        }
+        else {
+            tima = 0;  
+        }  
     }
-    else {
-    return ;
-    }
-    }
-
+    
 
 }
 
@@ -491,6 +489,7 @@ int main()
     consta = 3;
     //main cycle
     //--------------------------------
+    thread.start(show_time);
     while (1) {
         while (! RfChip.PICC_IsNewCardPresent()) {
                     cala.read();
@@ -518,16 +517,23 @@ int main()
         sendData(card_id, socketa);
         card_data = "";
         */
+        //init var
+        //----------------------------
+        long long dick;
+        int time_alt = 0;
+        //----------------------------
         int itterations = 15;
         int current = 0;
         bool checker = false, checker_check = false;
         consta = 15;
+        check_time_val = true;
         while (current != 2*itterations) {
         calla(to_string(current/2));
-        calla_alt(to_string(sensor.distance()));
-                 long distance = sensor.distance();   
-      pc.printf("distanza  %d  \n",distance);
-        wait_us(250000);
+        calla_alt(to_string(tima/8));
+        long distance = sensor.distance();   
+        pc.printf("distanza  %d  \n",distance);
+        wait_us(125000);
+        //time_alt++;
             if (checker && checker_check)
             {
                 current++;
@@ -535,11 +541,11 @@ int main()
                 checker_check = false;
             }
             else {
-            if (sensor.distance() > 50)
+            if (distance > 50)
             {
                 checker = true;
             }
-            if (sensor.distance() < 5) {
+            if (distance < 5) {
                 checker_check = true;
             }
             printf("\n");
@@ -548,6 +554,8 @@ int main()
         }
         consta = 0;
         printf("train stop");
+        check_time_val = false;
+        time_alt = 0;
         value = 0;
         
     }
